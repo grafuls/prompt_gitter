@@ -7,13 +7,16 @@ import Image from "next/image";
 import CreatePromptModal from "../components/CreatePromptModal";
 import PromptsList, { PromptsListRef } from "../components/PromptsList";
 
-type RepoStatus = 'checking' | 'exists' | 'not_exists' | 'creating' | 'error';
+type RepoStatus = {
+  state: 'not_exists' | 'exists' | 'checking' | 'creating' | 'error';
+  isCreating: boolean;
+};
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [repoStatus, setRepoStatus] = useState<RepoStatus>('checking');
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [repoStatus, setRepoStatus] = useState<RepoStatus>({ state: 'checking', isCreating: false });
+  const [errorMessage, setErrorMessage] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const promptsListRef = useRef<PromptsListRef>(null);
 
@@ -26,7 +29,7 @@ export default function Dashboard() {
   useEffect(() => {
     async function checkRepository() {
       // Reset status when session changes
-      setRepoStatus('checking');
+      setRepoStatus({ state: 'checking', isCreating: false });
       
       // Only proceed if we have the necessary session data
       if (!session || !session.username || !session.accessToken || status !== 'authenticated') {
@@ -42,16 +45,16 @@ export default function Dashboard() {
         });
         
         if (response.status === 404) {
-          setRepoStatus('not_exists');
+          setRepoStatus({ state: 'not_exists', isCreating: false });
         } else if (response.ok) {
-          setRepoStatus('exists');
+          setRepoStatus({ state: 'exists', isCreating: false });
         } else {
-          setRepoStatus('error');
+          setRepoStatus({ state: 'error', isCreating: false });
           const data = await response.json();
           setErrorMessage(data.message || 'Failed to check repository status');
         }
       } catch (error) {
-        setRepoStatus('error');
+        setRepoStatus({ state: 'error', isCreating: false });
         setErrorMessage('Failed to check repository status');
       }
     }
@@ -62,7 +65,7 @@ export default function Dashboard() {
   const createRepository = async () => {
     if (!session?.username) return;
 
-    setRepoStatus('creating');
+    setRepoStatus({ state: 'creating', isCreating: true });
     try {
       const response = await fetch('https://api.github.com/user/repos', {
         method: 'POST',
@@ -80,14 +83,14 @@ export default function Dashboard() {
       });
 
       if (response.ok) {
-        setRepoStatus('exists');
+        setRepoStatus({ state: 'exists', isCreating: false });
       } else {
-        setRepoStatus('error');
+        setRepoStatus({ state: 'error', isCreating: false });
         const data = await response.json();
         setErrorMessage(data.message || 'Failed to create repository');
       }
     } catch (error) {
-      setRepoStatus('error');
+      setRepoStatus({ state: 'error', isCreating: false });
       setErrorMessage('Failed to create repository');
     }
   };
@@ -144,16 +147,17 @@ export default function Dashboard() {
             {/* Repository Status Section */}
             <div className="mb-8 p-4 bg-gray-50 rounded-lg">
               <h3 className="font-medium text-black mb-4">AI Prompts Repository Status</h3>
-              {repoStatus === 'error' && (
+              {repoStatus.state === 'error' && (
                 <div className="mb-4 p-4 bg-red-50 text-black rounded-md">
                   Error: {errorMessage}
                 </div>
               )}
-              {repoStatus === 'checking' ? (
+              {repoStatus.state === 'checking' && (
                 <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-black"></div>
                 </div>
-              ) : repoStatus === 'exists' ? (
+              )}
+              {repoStatus.state === 'exists' && (
                 <div className="flex items-center justify-between">
                   <span className="text-black">✓ Repository exists</span>
                   <a
@@ -165,28 +169,29 @@ export default function Dashboard() {
                     View Repository
                   </a>
                 </div>
-              ) : repoStatus === 'not_exists' ? (
+              )}
+              {repoStatus.state === 'not_exists' && (
                 <div className="flex items-center justify-between">
                   <span className="text-black">Repository does not exist</span>
                   <button
                     onClick={createRepository}
                     className="px-4 py-2 bg-black text-white rounded-md hover:bg-black/80 transition-colors"
-                    disabled={repoStatus === 'creating'}
+                    disabled={repoStatus.isCreating}
                   >
-                    {repoStatus === 'creating' ? 'Creating...' : 'Create Repository'}
+                    {repoStatus.isCreating ? 'Creating...' : 'Create Repository'}
                   </button>
                 </div>
-              ) : null}
+              )}
             </div>
 
             {/* Prompts List Section */}
-            {repoStatus === 'exists' && (
+            {repoStatus.state === 'exists' && (
               <div>
                 <h3 className="text-lg font-semibold text-black mb-4">Your Prompts</h3>
                 <PromptsList 
                   ref={promptsListRef}
                   onCreatePrompt={() => setIsCreateModalOpen(true)}
-                  isCreateDisabled={repoStatus !== 'exists'}
+                  isCreateDisabled={repoStatus.state !== 'exists'}
                 />
               </div>
             )}
