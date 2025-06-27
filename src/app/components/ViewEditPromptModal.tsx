@@ -304,234 +304,243 @@ export default function ViewEditPromptModal({ isOpen, onClose, prompt, onPromptU
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col">
-        <div className="sticky top-0 bg-white p-6 border-b border-gray-200 rounded-t-lg">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-black">
-              {isEditing ? 'Edit Prompt' : 'View Prompt'}
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-black hover:text-black/70"
-            >
-              ✕
-            </button>
-          </div>
+    <div className="fixed inset-0 overflow-y-auto z-50">
+      <div 
+        className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center"
+        onClick={() => onClose()}
+      >
+        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div className="absolute inset-0 bg-black/75"></div>
         </div>
 
-        <div className="p-6 overflow-y-auto flex-1">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-black mb-1">
-                Title
-              </label>
-              {isEditing ? (
+        <div 
+          className="relative inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-card shadow-xl rounded-lg border border-default"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-medium leading-6 text-default">
+              {isEditing ? 'Edit Prompt' : prompt.title}
+            </h3>
+            <div className="flex space-x-2">
+              {!isEditing && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="px-3 py-1 text-sm font-medium text-white bg-[#2a2a2a] border border-[#3a3a3a] rounded-md hover:bg-[#3a3a3a]"
+                >
+                  Edit
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                className="px-3 py-1 text-sm font-medium text-white bg-[#2a2a2a] border border-[#3a3a3a] rounded-md hover:bg-[#3a3a3a]"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <div className="mb-4 p-4 bg-error/10 text-error rounded-md">
+              {error}
+            </div>
+          )}
+
+          {isEditing ? (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-default">
+                  Title
+                </label>
                 <input
                   type="text"
+                  id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
+                  className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50 placeholder-gray-400"
                   required
+                  placeholder="Enter prompt title"
                 />
-              ) : (
-                <p className="text-black">{title}</p>
-              )}
-            </div>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-black mb-1">
-                Description
-              </label>
-              {isEditing ? (
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-default">
+                  Description
+                </label>
                 <input
                   type="text"
+                  id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
-                  required
+                  className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50 placeholder-gray-400"
+                  placeholder="Enter prompt description"
                 />
-              ) : (
-                <p className="text-black">{description}</p>
-              )}
-            </div>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-black mb-1">
-                Prompt
-              </label>
-              {isEditing ? (
-                <textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md h-32 text-black font-mono"
-                  required
-                />
-              ) : (
-                <pre className="whitespace-pre-wrap text-black font-mono bg-gray-50 p-3 rounded-md">
-                  {content}
-                </pre>
-              )}
-            </div>
+              <div>
+                <label htmlFor="provider" className="block text-sm font-medium text-default">
+                  Provider
+                </label>
+                <select
+                  id="provider"
+                  value={provider}
+                  onChange={(e) => handleProviderChange(e.target.value as Provider)}
+                  className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50"
+                >
+                  {Object.entries(PROVIDERS).map(([key, value]) => (
+                    <option key={key} value={key} className="bg-[#2a2a2a] text-white">
+                      {value.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-black mb-1">
-                Tags
-              </label>
-              {isEditing ? (
+              <div>
+                <label htmlFor="model" className="block text-sm font-medium text-default">
+                  Model
+                </label>
+                <select
+                  id="model"
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50"
+                >
+                  {PROVIDERS[provider].models.map((model) => (
+                    <option key={model} value={model} className="bg-[#2a2a2a] text-white">
+                      {model}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="tags" className="block text-sm font-medium text-default">
+                  Tags (comma-separated)
+                </label>
                 <input
                   type="text"
+                  id="tags"
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
-                  required
+                  className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50 placeholder-gray-400"
+                  placeholder="Enter tags separated by commas"
                 />
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {prompt.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-gray-100 text-black px-2 py-1 rounded-md text-sm"
-                    >
+              </div>
+
+              <div>
+                <label htmlFor="content" className="block text-sm font-medium text-default">
+                  Prompt
+                </label>
+                <textarea
+                  id="content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={5}
+                  className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50 placeholder-gray-400 font-mono"
+                  required
+                  placeholder="Enter your prompt text"
+                />
+              </div>
+
+              <div className="mt-6 flex justify-between">
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="px-4 py-2 text-sm font-medium text-white bg-error rounded-md hover:opacity-90"
+                >
+                  Delete Prompt
+                </button>
+                <div className="flex space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#2a2a2a] border border-[#3a3a3a] rounded-md hover:bg-[#3a3a3a]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSaving}
+                    className="px-4 py-2 text-sm font-medium text-white bg-button rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent disabled:opacity-50"
+                  >
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </div>
+            </form>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-sm font-medium text-default">Description</h4>
+                <p className="mt-1 text-secondary">{prompt.description || 'No description provided'}</p>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-medium text-default">Provider</h4>
+                <p className="mt-1 text-secondary">{PROVIDERS[prompt.provider].name}</p>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-medium text-default">Model</h4>
+                <p className="mt-1 text-secondary">{prompt.model}</p>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-medium text-default">Tags</h4>
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {prompt.tags.map((tag) => (
+                    <span key={tag} className="px-2 py-1 text-xs rounded-full bg-[#2a2a2a] text-white border border-[#3a3a3a]">
                       {tag}
                     </span>
                   ))}
                 </div>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-black mb-1">
-                  Provider
-                </label>
-                {isEditing ? (
-                  <select
-                    value={provider}
-                    onChange={(e) => handleProviderChange(e.target.value as Provider)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
-                  >
-                    {Object.entries(PROVIDERS).map(([key, { name }]) => (
-                      <option key={key} value={key}>
-                        {name}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <p className="text-black">{PROVIDERS[provider]?.name || provider}</p>
-                )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-black mb-1">
-                  Model
-                </label>
-                {isEditing ? (
-                  <select
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
-                  >
-                    {PROVIDERS[provider].models.map((model) => (
-                      <option key={model} value={model}>
-                        {model}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <p className="text-black">{model}</p>
-                )}
+                <h4 className="text-sm font-medium text-default">Prompt</h4>
+                <pre className="mt-1 p-4 rounded-md bg-[#2a2a2a] text-white border border-[#3a3a3a] font-mono whitespace-pre-wrap">
+                  {prompt.content || content}
+                </pre>
               </div>
             </div>
+          )}
 
-            {error && (
-              <div className="text-red-600 text-sm">{error}</div>
-            )}
-          </form>
-        </div>
-
-        <div className="sticky bottom-0 bg-white p-6 border-t border-gray-200 rounded-b-lg">
-          <div className="flex justify-between">
-            <div>
-              {!showDeleteConfirm ? (
-                <button
-                  type="button"
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-md hover:bg-red-100"
-                  disabled={isSaving}
-                >
-                  Delete
-                </button>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-red-600">Are you sure?</span>
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
-                    disabled={isSaving}
-                  >
-                    Yes, Delete
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowDeleteConfirm(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200"
-                    disabled={isSaving}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
-            </div>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-black bg-gray-100 rounded-md hover:bg-gray-200"
-                disabled={isSaving}
+          {showDeleteConfirm && (
+            <div className="fixed inset-0 overflow-y-auto z-[60]">
+              <div 
+                className="flex items-center justify-center min-h-screen"
+                onClick={() => setShowDeleteConfirm(false)}
               >
-                Close
-              </button>
-              {!isEditing ? (
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-black/80"
-                  disabled={isSaving}
+                <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                  <div className="absolute inset-0 bg-black/75"></div>
+                </div>
+
+                <div 
+                  className="relative bg-card rounded-lg p-6 max-w-sm mx-auto"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  Edit
-                </button>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsEditing(false);
-                      setTitle(prompt.title);
-                      setDescription(prompt.description);
-                      setContent(prompt.content || '');
-                      setTags(prompt.tags.join(', '));
-                      setProvider(prompt.provider || 'openai');
-                      setModel(prompt.model);
-                    }}
-                    className="px-4 py-2 text-sm font-medium text-black bg-gray-100 rounded-md hover:bg-gray-200"
-                    disabled={isSaving}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-black/80"
-                    disabled={isSaving}
-                  >
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </button>
-                </>
-              )}
+                  <h3 className="text-lg font-medium text-default mb-4">Delete Prompt</h3>
+                  <p className="text-secondary mb-6">
+                    Are you sure you want to delete this prompt? This action cannot be undone.
+                  </p>
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="px-4 py-2 text-sm font-medium text-white bg-[#2a2a2a] border border-[#3a3a3a] rounded-md hover:bg-[#3a3a3a]"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDelete}
+                      disabled={isSaving}
+                      className="px-4 py-2 text-sm font-medium text-white bg-error rounded-md hover:opacity-90"
+                    >
+                      {isSaving ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

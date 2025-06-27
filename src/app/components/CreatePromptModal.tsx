@@ -180,127 +180,142 @@ export default function CreatePromptModal({ isOpen, onClose, onPromptCreated }: 
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-black">Create New Prompt</h2>
-          <button
-            onClick={onClose}
-            className="text-black hover:text-black/70"
-          >
-            ✕
-          </button>
+    <div className="fixed inset-0 overflow-y-auto z-50">
+      <div 
+        className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center"
+        onClick={() => onClose()}
+      >
+        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div className="absolute inset-0 bg-black/75"></div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-black mb-1">
-              Title
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
-              required
-            />
-          </div>
+        <div 
+          className="relative inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-card shadow-xl rounded-lg border border-default"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h3 className="text-lg font-medium leading-6 text-default mb-4">
+            Create New Prompt
+          </h3>
+          
+          {error && (
+            <div className="mb-4 p-4 bg-error/10 text-error rounded-md">
+              {error}
+            </div>
+          )}
 
-          <div>
-            <label className="block text-sm font-medium text-black mb-1">
-              Description
-            </label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-black mb-1">
-              Prompt
-            </label>
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md h-32 text-black font-mono"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-black mb-1">
-              Tags (comma-separated)
-            </label>
-            <input
-              type="text"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-black mb-1">
+              <label htmlFor="title" className="block text-sm font-medium text-default">
+                Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50 placeholder-gray-400"
+                required
+                placeholder="Enter prompt title"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-default">
+                Description
+              </label>
+              <input
+                type="text"
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50 placeholder-gray-400"
+                placeholder="Enter prompt description"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="provider" className="block text-sm font-medium text-default">
                 Provider
               </label>
               <select
+                id="provider"
                 value={provider}
                 onChange={(e) => handleProviderChange(e.target.value as Provider)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
+                className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50"
               >
-                {Object.entries(PROVIDERS).map(([key, { name }]) => (
-                  <option key={key} value={key}>
-                    {name}
+                {Object.entries(PROVIDERS).map(([key, value]) => (
+                  <option key={key} value={key} className="bg-[#2a2a2a] text-white">
+                    {value.name}
                   </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-black mb-1">
+              <label htmlFor="model" className="block text-sm font-medium text-default">
                 Model
               </label>
               <select
+                id="model"
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-black"
+                className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50"
               >
                 {PROVIDERS[provider].models.map((model) => (
-                  <option key={model} value={model}>
+                  <option key={model} value={model} className="bg-[#2a2a2a] text-white">
                     {model}
                   </option>
                 ))}
               </select>
             </div>
-          </div>
 
-          {error && (
-            <div className="text-red-600 text-sm">{error}</div>
-          )}
+            <div>
+              <label htmlFor="tags" className="block text-sm font-medium text-default">
+                Tags (comma-separated)
+              </label>
+              <input
+                type="text"
+                id="tags"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50 placeholder-gray-400"
+                placeholder="Enter tags separated by commas"
+              />
+            </div>
 
-          <div className="flex justify-end gap-3 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-black bg-gray-100 rounded-md hover:bg-gray-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-black/80 disabled:bg-black/50"
-            >
-              {isSaving ? 'Creating...' : 'Create Prompt'}
-            </button>
-          </div>
-        </form>
+            <div>
+              <label htmlFor="prompt" className="block text-sm font-medium text-default">
+                Prompt
+              </label>
+              <textarea
+                id="prompt"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={5}
+                className="mt-1 block w-full rounded-md bg-[#2a2a2a] border-[#3a3a3a] text-white shadow-sm focus:border-accent focus:ring focus:ring-accent focus:ring-opacity-50 placeholder-gray-400 font-mono"
+                required
+                placeholder="Enter your prompt text"
+              />
+            </div>
+
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm font-medium text-white bg-[#2a2a2a] border border-[#3a3a3a] rounded-md hover:bg-[#3a3a3a]"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="px-4 py-2 text-sm font-medium text-white bg-[#238636] rounded-md hover:bg-[#2ea043] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#238636] disabled:opacity-50"
+              >
+                {isSaving ? 'Creating...' : 'Create Prompt'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

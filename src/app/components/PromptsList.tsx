@@ -46,7 +46,7 @@ const PromptsList = forwardRef<PromptsListRef, PromptsListProps>(({ onCreateProm
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false);
   const [isProvidersDropdownOpen, setIsProvidersDropdownOpen] = useState(false);
@@ -154,10 +154,10 @@ const PromptsList = forwardRef<PromptsListRef, PromptsListProps>(({ onCreateProm
 
   const filteredPrompts = prompts
     .filter(prompt =>
-      (searchTerm === '' ||
-        prompt.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        prompt.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        prompt.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())))
+      (searchQuery === '' ||
+        prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        prompt.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        prompt.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())))
     )
     .filter(prompt =>
       selectedTags.length === 0 ||
@@ -200,7 +200,7 @@ const PromptsList = forwardRef<PromptsListRef, PromptsListProps>(({ onCreateProm
         <button
           onClick={onCreatePrompt}
           disabled={isCreateDisabled}
-          className="px-4 py-2 text-white bg-black rounded-md hover:bg-black/80 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-[#238636] text-white rounded-md hover:bg-[#2ea043] transition-colors disabled:opacity-50"
         >
           Create New Prompt
         </button>
@@ -216,9 +216,9 @@ const PromptsList = forwardRef<PromptsListRef, PromptsListProps>(({ onCreateProm
             <input
               type="text"
               placeholder="Search prompts..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md text-black"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 rounded-md bg-[#2a2a2a] border border-[#3a3a3a] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#238636] focus:border-[#238636]"
             />
           </div>
           <div className="relative">
@@ -305,7 +305,7 @@ const PromptsList = forwardRef<PromptsListRef, PromptsListProps>(({ onCreateProm
           <button
             onClick={onCreatePrompt}
             disabled={isCreateDisabled}
-            className="px-4 py-2 text-white bg-black rounded-md hover:bg-black/80 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-[#238636] text-white rounded-md hover:bg-[#2ea043] transition-colors disabled:opacity-50"
           >
             Create New Prompt
           </button>

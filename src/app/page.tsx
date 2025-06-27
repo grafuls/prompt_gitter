@@ -15,17 +15,17 @@ export default function Home() {
   }, [status, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="max-w-md w-full space-y-8 p-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-2">Welcome to Prompt Gitter</h1>
-          <p className="text-gray-600">Please sign in to continue</p>
+          <h1 className="text-4xl font-bold mb-2 text-default">Welcome to Prompt Gitter</h1>
+          <p className="text-secondary">Please sign in to continue</p>
         </div>
         
         <div className="mt-8">
           <button
             onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
-            className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-button hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
           >
             <svg
               className="w-5 h-5 mr-2"

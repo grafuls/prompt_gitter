@@ -110,12 +110,12 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
+    <div className="min-h-screen bg-background">
+      <nav className="bg-secondary border-b border-default">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-black">Prompt Gitter Dashboard</h1>
+              <h1 className="text-2xl font-bold text-default">Prompt Gitter Dashboard</h1>
             </div>
             <div className="flex items-center">
               {session?.user?.image && (
@@ -127,10 +127,10 @@ export default function Dashboard() {
                   className="rounded-full"
                 />
               )}
-              <span className="ml-3 text-black">{session?.user?.name}</span>
+              <span className="ml-3 text-default">{session?.user?.name}</span>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="ml-4 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                className="ml-4 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-button hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
               >
                 Sign Out
               </button>
@@ -141,30 +141,30 @@ export default function Dashboard() {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white shadow rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4 text-black">Welcome, {session?.user?.name}!</h2>
+          <div className="bg-card shadow rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4 text-default">Welcome, {session?.user?.name}!</h2>
             
             {/* Repository Status Section */}
-            <div className="mb-8 p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-black mb-4">AI Prompts Repository Status</h3>
+            <div className="mb-8 p-4 bg-secondary rounded-lg border border-default">
+              <h3 className="font-medium text-default mb-4">AI Prompts Repository Status</h3>
               {repoStatus.state === 'error' && (
-                <div className="mb-4 p-4 bg-red-50 text-black rounded-md">
+                <div className="mb-4 p-4 bg-error/10 text-error rounded-md">
                   Error: {errorMessage}
                 </div>
               )}
               {repoStatus.state === 'checking' && (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-black"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-accent"></div>
                 </div>
               )}
               {repoStatus.state === 'exists' && (
                 <div className="flex items-center justify-between">
-                  <span className="text-black">✓ Repository exists</span>
+                  <span className="text-success">✓ Repository exists</span>
                   <a
                     href={`https://github.com/${session?.username}/ai_prompts`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-black text-white rounded-md hover:bg-black/80 transition-colors"
+                    className="px-4 py-2 bg-button text-white rounded-md hover:opacity-90 transition-colors"
                   >
                     View Repository
                   </a>
@@ -172,10 +172,10 @@ export default function Dashboard() {
               )}
               {repoStatus.state === 'not_exists' && (
                 <div className="flex items-center justify-between">
-                  <span className="text-black">Repository does not exist</span>
+                  <span className="text-default">Repository does not exist</span>
                   <button
                     onClick={createRepository}
-                    className="px-4 py-2 bg-black text-white rounded-md hover:bg-black/80 transition-colors"
+                    className="px-4 py-2 bg-[#238636] text-white rounded-md hover:bg-[#2ea043] transition-colors disabled:opacity-50"
                     disabled={repoStatus.isCreating}
                   >
                     {repoStatus.isCreating ? 'Creating...' : 'Create Repository'}
@@ -187,7 +187,7 @@ export default function Dashboard() {
             {/* Prompts List Section */}
             {repoStatus.state === 'exists' && (
               <div>
-                <h3 className="text-lg font-semibold text-black mb-4">Your Prompts</h3>
+                <h3 className="text-lg font-semibold text-default mb-4">Your Prompts</h3>
                 <PromptsList 
                   ref={promptsListRef}
                   onCreatePrompt={() => setIsCreateModalOpen(true)}
